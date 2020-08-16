@@ -50,14 +50,21 @@ def loadImages(objects):
 
 
 def setChoice(name):
-	global choice,madeChoice
+	global choice
 	choice=name
 	print(choice)
 def displayMessage(message,x,y,font,screen):
 	textsurface = font.render(message, False, (27,68,140))
 	screen.blit(textsurface,(x,y))
+def getCheatBotMove(choice):
+	if choice=="Rock":
+		return 2
+	elif choice=="Paper":
+		return 0
+	elif choice=="Scissors":
+		return 1
 def game(choice,screen):
-	global message
+	global message,alwaysWin
 	if choice =="Rock":#prob showing for just a split second
 		objects[3].show(screen)
 	elif choice=="Paper":
@@ -65,71 +72,77 @@ def game(choice,screen):
 	elif choice=="Scissors":
 		objects[5].show(screen)
 	pygame.display.flip()
-	sleep(0.4)
-	enemyChoice=random.randint(0,2)
+	sleep(0.6)
+	if not alwaysWin:
+		enemyChoice=random.randint(0,2)
+	else:
+		enemyChoice=getCheatBotMove(choice)
+
 	print(f"enemyChoice: {enemyChoice}")
+
 
 	objects[enemyChoice].show(screen)
 	pygame.display.flip()
-	sleep(0.4)
+	sleep(0.6)
 
 
 	if choice=="Rock":
 		if enemyChoice==0:
-			print("Draw!")
+			
 			message="Draw!"
 
 		elif enemyChoice==1:
-			print("You lost!")
+			
 			message="You lost!"
 
 		elif enemyChoice==2:
-			print("You won!")
+			
 			message="You won!"
 
 	elif choice=="Paper":
 		if enemyChoice==0:
-			print("You won")
+			
 			message="You won"
 
 		elif enemyChoice==1:
-			print("Draw")
+			
 			message="Draw!"
 
 		elif enemyChoice==2:
-			print("You lost!")
+			
 			message="You lost!"
 
 	elif choice=="Scissors":
 		if enemyChoice==0:
-			print("You lost")
 			message="You lost!"
 
 		elif enemyChoice==1:
-			print("You win")
+			
 			message="You win"
 
 		elif enemyChoice==2:
-			print("Draw")
+			
 			message="Draw!"
-	if message!="Draw":
-		displayMessage(message,220,100,font,screen)
+	
+	if message=="Draw!":
+		displayMessage(message,270,200,font,screen)
 	else:
-		displayMessage(message,600,100,font,screen)
+		displayMessage(message,220,200,font,screen)
+
 	pygame.display.flip()
-	sleep(0.4)
+	sleep(1)
 
 
 	
 def main():
-	global objects,choice,font,screen
+	global objects,choice,font,screen,alwaysWin
 	objects=[]
 	
 	choice=None
 	message=""
 	width=800
 	height=600
-
+	alwaysWin=False
 	gameRunning=True
 
 	font = pygame.font.SysFont('Arial', 100)
@@ -137,6 +150,8 @@ def main():
 	FPS=60
 	screen=pygame.display.set_mode((width,height))
 	pygame.display.set_caption("RPS-Remastered")
+
+
 
 	pygame.display.flip()
 
@@ -184,7 +199,9 @@ def main():
 			rockChoice.checkForClick(event,setChoice)
 			paperChoice.checkForClick(event,setChoice)
 			scissorsChoice.checkForClick(event,setChoice)
-			
+			if event.type==pygame.KEYDOWN:
+				if event.key==pygame.K_a:
+					alwaysWin= not alwaysWin
 		if choice !=None:
 			game(choice,screen)
 		choice =None
